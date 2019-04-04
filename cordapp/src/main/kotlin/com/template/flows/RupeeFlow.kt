@@ -1,4 +1,4 @@
-package com.template
+package com.template.flows
 
 import co.paralleluniverse.fibers.Suspendable
 import com.template.contracts.RupeeContract
@@ -99,11 +99,11 @@ object RupeeFlow{
             val txBuilder = TransactionBuilder(notary)
 
             val rupeeInputs = serviceHub.vaultService.queryBy<RupeeState>().states
-            val rupeesInput = calculateStates(amount,rupeeInputs)
+            val rupeesInput = calculateStates(amount, rupeeInputs)
 
             rupeesInput.forEach { txBuilder.addInputState(it)}
 
-            val finalStates = calculateChange(rupeesInput.map { it.state.data },amount, newOwner)
+            val finalStates = calculateChange(rupeesInput.map { it.state.data }, amount, newOwner)
 
             val command = Command(RupeeContract.Commands.transfer(), listOf(ourIdentity.owningKey,finalStates.otherPartyRupee.owner.owningKey))
             txBuilder.addOutputState(finalStates.otherPartyRupee,RupeeContract.ID )
