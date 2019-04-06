@@ -1,17 +1,20 @@
-package com.template.Controller
+package com.template.Controller.PartyA
 
-import com.template.flows.RupeeFlow
 import com.template.config.NodeRPCConnection
+import com.template.flows.RupeeFlow
+import com.template.states.RupeeState
 import net.corda.core.identity.CordaX500Name
+import net.corda.core.messaging.vaultQueryBy
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.web.bind.annotation.*
 
 /**
  * Define your API endpoints here.
  */
 @RestController("PartyAController")
-@RequestMapping("/partyA") // The paths for HTTP requests are relative to this base path.
-class Controller(rpc: NodeRPCConnection) {
+@RequestMapping("/PartyA") // The paths for HTTP requests are relative to this base path.
+class Controller(@Qualifier("partyAConnection") rpc: NodeRPCConnection) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(RestController::class.java)
@@ -19,9 +22,9 @@ class Controller(rpc: NodeRPCConnection) {
 
     private val proxy = rpc.proxy
 
-    @GetMapping(value = "/templateendpoint", produces = arrayOf("text/plain"))
-    private fun templateendpoint(): String {
-        return "Define an endpoint here."
+    @GetMapping(value = "/getRupee")
+    private fun getRupee(): List<RupeeState> {
+        return proxy.vaultQueryBy<RupeeState>().states.map { it.state.data }
     }
 
     @PostMapping(value = "/issueRupee")
