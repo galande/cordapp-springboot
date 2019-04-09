@@ -6,10 +6,7 @@ import com.template.states.HouseState
 import net.corda.core.contracts.Command
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
-import net.corda.core.node.services.Vault
-import net.corda.core.node.services.VaultService
 import net.corda.core.node.services.queryBy
-import net.corda.core.node.services.vault.QueryCriteria
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.ProgressTracker
@@ -37,27 +34,31 @@ object TransferHouseFlow{
             val notary = serviceHub.networkMapCache.notaryIdentities[0]
             val inputHouses = serviceHub.vaultService.queryBy<HouseState>().states.singleOrNull{it.state.data.houseNumber == houseNumber}?:throw FlowException("No state found in the vault")
             val inputHouse = inputHouses.state.data
-            val outputHouse = HouseState(inputHouse.houseNumber,inputHouse.address,inputHouse.issuer,newOwner)
-            val command = Command(HouseContract.Commands.Transfer(),inputHouse.owner.owningKey)
+            val outputHouse = HouseState(inputHouse.houseNumber,inputHouse.address,inputHouse.municipalCorporation,newOwner)
+            val command = Command(HouseContract.Commands.Transfer(), listOf(ourIdentity.owningKey, inputHouse.owner.owningKey, newOwner.owningKey))
 
-            val txBuilder = TransactionBuilder(notary).addInputState(inputHouses).addOutputState(outputHouse,HouseContract.ID)
+            val txBuilder = TransactionBuilder(notary)
+                    .addInputState(inputHouses)
+                    .addOutputState(outputHouse,HouseContract.ID)
                     .addCommand(command)
 
-            val stx = serviceHub.signInitialTransaction(txBuilder)
             txBuilder.verify(serviceHub)
+            val partiallySignedTx = serviceHub.signInitialTransaction(txBuilder)
+            val counterPartiesSessions = setOf(initiateFlow(inputHouse.owner), initiateFlow(outputHouse.owner))
+            val fullySignedTx = subFlow(CollectSignaturesFlow(partiallySignedTx, counterPartiesSessions))
 
-            return subFlow(FinalityFlow(stx))
+            return subFlow(FinalityFlow(fullySignedTx))
 
         }
     }
 
-//    @InitiatedBy(Initiator::class)
-//    class Responder(flowSession: FlowSession): FlowLogic<Unit>(){
-//
-//        @Suspendable
-//        override fun call() {
-//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//        }
-//    }
+    @InitiatedBy(Initiator::class)
+    class Responder(flowSession: FlowSession): FlowLogic<Unit>(){
+
+        @Suspendable
+        override fun call() {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+    }
 }
 

@@ -12,7 +12,7 @@
 //
 //    init {
 //        listOf(a, b).forEach {
-//            it.registerInitiatedFlow(Responder::class.java)
+//            it.registerInitiatedFlow(TransferResponder::class.java)
 //        }
 //    }
 //

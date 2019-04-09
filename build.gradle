@@ -92,7 +92,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         ]
     }
     node {
-        name "O=PartyA,L=London,C=GB"
+        name "O=Central Bank,L=Pune,C=IN"
         p2pPort 10005
         rpcSettings {
             address("localhost:10006")
@@ -105,7 +105,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
-        name "O=PartyB,L=New York,C=US"
+        name "O=Municipal Corporation,L=Pune,C=IN"
         p2pPort 10008
         rpcSettings {
             address("localhost:10009")
@@ -118,11 +118,37 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
-        name "O=PartyC,L=New York,C=US"
+        name "O=Homes Estate,L=Pune,C=IN"
         p2pPort 10011
         rpcSettings {
             address("localhost:10012")
             adminAddress("localhost:10052")
+        }
+        cordapps = [
+                "$project.group:cordapp-contracts-states:$project.version",
+                "$project.group:cordapp:$project.version"
+        ]
+        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+    }
+    node {
+        name "O=ABIL Developers,L=Pune,C=IN"
+        p2pPort 10014
+        rpcSettings {
+            address("localhost:10015")
+            adminAddress("localhost:10053")
+        }
+        cordapps = [
+                "$project.group:cordapp-contracts-states:$project.version",
+                "$project.group:cordapp:$project.version"
+        ]
+        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+    }
+    node {
+        name "O=Paranjpe Construction,L=Pune,C=IN"
+        p2pPort 10017
+        rpcSettings {
+            address("localhost:10018")
+            adminAddress("localhost:10054")
         }
         cordapps = [
                 "$project.group:cordapp-contracts-states:$project.version",

@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     val rpcUsers = listOf(User("user1", "test", permissions = setOf("ALL")))
 
     driver(DriverParameters(startNodesInProcess = true, waitForAllNodesToFinish = true)) {
-        startNode(providedName = CordaX500Name("PartyA", "London", "GB"), rpcUsers = rpcUsers).getOrThrow()
-        startNode(providedName = CordaX500Name("PartyB", "New York", "US"), rpcUsers = rpcUsers).getOrThrow()
+        startNode(providedName = CordaX500Name("CentralBank", "London", "GB"), rpcUsers = rpcUsers).getOrThrow()
+        startNode(providedName = CordaX500Name("MunicipalCorp", "New York", "US"), rpcUsers = rpcUsers).getOrThrow()
     }
 }

@@ -1,4 +1,4 @@
-package com.template.Controller.PartyA
+package com.template.Controller.CentralBank
 
 import com.template.config.NodeRPCConnection
 import com.template.flows.RupeeFlow
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*
 /**
  * Define your API endpoints here.
  */
-@RestController("PartyAController")
-@RequestMapping("/PartyA") // The paths for HTTP requests are relative to this base path.
-class Controller(@Qualifier("partyAConnection") rpc: NodeRPCConnection) {
+@RestController("CentralBankController")
+@RequestMapping("/centralBank/rupee") // The paths for HTTP requests are relative to this base path.
+class CentralBankController(@Qualifier("centralBankConnection") rpc: NodeRPCConnection) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(RestController::class.java)
@@ -22,12 +22,12 @@ class Controller(@Qualifier("partyAConnection") rpc: NodeRPCConnection) {
 
     private val proxy = rpc.proxy
 
-    @GetMapping(value = "/getRupee")
+    @GetMapping(value = "/all")
     private fun getRupee(): List<RupeeState> {
         return proxy.vaultQueryBy<RupeeState>().states.map { it.state.data }
     }
 
-    @PostMapping(value = "/issueRupee")
+    @PostMapping(value = "/issue")
     private fun issueRupee(@RequestParam amount: Int, @RequestParam owner: String): String{
         val ownerParty = proxy.wellKnownPartyFromX500Name(CordaX500Name.parse(owner))?: "Unknown Party"
 

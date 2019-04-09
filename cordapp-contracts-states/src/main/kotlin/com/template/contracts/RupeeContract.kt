@@ -45,15 +45,17 @@ class RupeeContract : Contract{
                     "Input amount and Output amount must be the same" using (inputAmount == outputAmount)
                     "There must be at least one input" using (inputs.isNotEmpty())
 
+                    val inputRupee = inputs.first()
+                    val outputRupee = outputs.first()
+
+                    "Input and Output Rupee must be same except owner" using (inputRupee.withoutOwner() == outputRupee.withoutOwner())
+
                     "there must be atleast one output" using (outputs.isNotEmpty())
                     val inputOwner = inputs.map { it.owner.owningKey }.distinct()
                     val outputOwner = outputs.map { it.owner.owningKey }.distinct()
                     val requiredSigners = inputOwner + outputOwner
                     "Input and output owners must be signers" using (command.signers.containsAll(requiredSigners))
                 }
-
-
-
             }
         }
     }

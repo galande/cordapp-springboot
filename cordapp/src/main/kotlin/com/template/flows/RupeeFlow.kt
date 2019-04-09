@@ -58,17 +58,17 @@ object RupeeFlow{
     }
 
     @InitiatedBy(Issue::class)
-    class Responder(val counterPartySession: FlowSession) : FlowLogic<Unit>(){
+    class IssueResponder(val counterPartySession: FlowSession) : FlowLogic<Unit>(){
 
         @Suspendable
         override fun call() {
 
-            val reserveBank = serviceHub.networkMapCache.getPeerByLegalName(CordaX500Name("PartyA","London","GB"))
+            val centralBank = serviceHub.networkMapCache.getPeerByLegalName(CordaX500Name("Central Bank","Pune","IN"))
 
             val signTransactionFlow = object : SignTransactionFlow(counterPartySession){
                 override fun checkTransaction(stx: SignedTransaction) {
                     requireThat {
-                        "Only Reserve Bank can issue the rupee" using (counterPartySession.counterparty == reserveBank)
+                        "Only Central Bank can issue the rupee" using (counterPartySession.counterparty == centralBank)
                         "Bank must sign tx first" using (stx.sigs.any { sig -> sig.by == counterPartySession.counterparty.owningKey})
                     }
                 }

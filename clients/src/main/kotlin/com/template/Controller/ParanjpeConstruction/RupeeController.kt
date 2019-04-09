@@ -1,4 +1,4 @@
-package com.template.Controller.PartyA
+package com.template.Controller.AbilDevelopers
 
 import com.template.config.NodeRPCConnection
 import com.template.flows.RupeeFlow
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*
 /**
  * Define your API endpoints here.
  */
-@RestController("PartyAController")
-@RequestMapping("/PartyA") // The paths for HTTP requests are relative to this base path.
-class Controller(@Qualifier("partyAConnection") rpc: NodeRPCConnection) {
+@RestController("ParanjpeConRupeeController")
+@RequestMapping("/paranjpeCon/rupee") // The paths for HTTP requests are relative to this base path.
+class ParanjpeConRupeeController(@Qualifier("paranjpeConstructionConnection") rpc: NodeRPCConnection) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(RestController::class.java)
@@ -22,15 +22,8 @@ class Controller(@Qualifier("partyAConnection") rpc: NodeRPCConnection) {
 
     private val proxy = rpc.proxy
 
-    @GetMapping(value = "/getRupee")
+    @GetMapping(value = "/owned")
     private fun getRupee(): List<RupeeState> {
         return proxy.vaultQueryBy<RupeeState>().states.map { it.state.data }
-    }
-
-    @PostMapping(value = "/issueRupee")
-    private fun issueRupee(@RequestParam amount: Int, @RequestParam owner: String): String{
-        val ownerParty = proxy.wellKnownPartyFromX500Name(CordaX500Name.parse(owner))?: "Unknown Party"
-
-        return proxy.startFlowDynamic(RupeeFlow.Issue::class.java,amount, ownerParty).returnValue.get().toString()
     }
 }
