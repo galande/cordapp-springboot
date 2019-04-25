@@ -1,0 +1,11 @@
+@GetMapping("/download")
+    private fun getAttachemnt(@RequestParam("hash") hash: String) : List<String>{
+        val inputStream = proxy.openAttachment(SecureHash.parse(hash))
+        val zis = ZipInputStream(inputStream)
+
+        while (zis.nextEntry.name == "test.xml"){
+            zis.nextEntry
+        }
+        val content = zis.bufferedReader().readLines()
+        return content
+    }
